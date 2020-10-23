@@ -14,39 +14,39 @@ import "./Layout.css";
 const width = window.innerWidth;
 const height = window.innerHeight;
 
-const renderedMap = (boundaries,area) =>{
-  if(area === 'india')
-  	return boundaries.state.features;
-  else{
-  	 return boundaries.dist.features.filter(d => d.properties.NAME2_ === area);
-  }
-}
+const renderedMap = (boundaries) => (boundaries.state.features);
+  
+
+
+
 
 const Layout = () => {
 
-  const iniArea = 'india';
-	const [area,setArea] = useState(iniArea);
+  const iniSelArea = '1';  //india
+  const [selArea,setSelArea] = useState(iniSelArea);
+  
+  console.log(selArea);
+
   const [selData,setSelData] = useState();
   const [areaDropdownOpt, setAreaDropdownOpt] = useState(null);
-  
-  const boundaries = useData(area);
+  const boundaries = useData();
   
   useEffect(() => {
-    const url = 'http://localhost:8000/api/areaList/';
+    const url = 'http://localhost:8000/api/area';
     json(url).then( options =>{
       setAreaDropdownOpt(options);
     }
     )
   }, [])
   
-  if(!boundaries){
+  if(!boundaries || !areaDropdownOpt){
   	return <pre>Loading...</pre>
   }
 
-  if(!areaDropdownOpt){
-  	return <pre>Loading...</pre>
-  }
-  let renderMap = renderedMap(boundaries,area);
+  // if(!areaDropdownOpt){
+  // 	return <pre>Loading...</pre>
+  // }
+  let renderMap = renderedMap(boundaries);
   
   const options = [
     { value: 'one', label: 'One' },
@@ -71,17 +71,20 @@ const Layout = () => {
         <div className="grid-container">
           {/* <div className="grid-item">header</div> */}
           <div className="grid-item">
-          <Dropdown options={areaDropdownOpt}  value={defaultOption} placeholder="Select an option" />
-          <Dropdown options={options}  value={defaultOption} placeholder="Select an option" />
+          <Dropdown
+          options={areaDropdownOpt}
+          value={selArea}
+          onChange={({ value }) => setSelArea(value)}
+        />
 
-            
           </div>
-          <div className="grid-item">
+          <div className="grid-item" id='map-div'>
      
-          <svg width={width} height={height}>
-    	<Marks data={renderMap} width={width} height={height} onMapClick={setArea}/>
-    </svg>
-          <Map/>
+            <svg width={width} height={height}>
+    	        {/* <Marks data={renderMap} width={width} height={height} onMapClick={setArea}/> */}
+              <Map data={renderMap} width={width} height={height}/>
+
+            </svg>
           </div>
           {/* <div className="grid-item">footer</div> */}
 
