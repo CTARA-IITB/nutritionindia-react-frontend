@@ -21,15 +21,10 @@ const renderedMap = (boundaries) => (boundaries.state.features);
 
 
 const Layout = () => {
-
+  //Area
   const iniSelArea = '1';  //india
   const [selArea,setSelArea] = useState(iniSelArea);
-  
-  console.log(selArea);
-
-  const [selData,setSelData] = useState();
   const [areaDropdownOpt, setAreaDropdownOpt] = useState(null);
-  const boundaries = useData();
   
   useEffect(() => {
     const url = 'http://localhost:8000/api/area';
@@ -38,33 +33,63 @@ const Layout = () => {
     }
     )
   }, [])
+
+  //Indicator
+  const iniSelIndicator = '12';  //india
+  const [selIndicator,setSelIndicator] = useState(iniSelIndicator);
+  const [indicatorDropdownOpt, setIndicatorDropdownOpt] = useState(null);
+
+
+  useEffect(() => {
+    const url = 'http://localhost:8000/api/indicator';
+    json(url).then( options =>{
+      setIndicatorDropdownOpt(options);
+    }
+    )
+  }, [])
+
+
+    //subgroup
+    const iniSelSubgroup = '6';  //All
+    const [selSubgroup,setSelSubgroup] = useState(iniSelSubgroup);
+    const [subgroupDropdownOpt, setSubgroupDropdownOpt] = useState(null);
   
-  if(!boundaries || !areaDropdownOpt){
+  
+    useEffect(() => {
+      const url = `http://localhost:8000/api/subgroup/${selIndicator}`;
+      json(url).then( options =>{
+        setSubgroupDropdownOpt(options);
+      }
+      )
+    }, [selIndicator])
+
+
+    //timeperiod
+    const iniSelTimeperiod = '21';  //CNNS 2016-2018
+    const [selTimeperiod,setSelTimeperiod] = useState(iniSelTimeperiod);
+    const [timeperiodDropdownOpt, setTimeperiodDropdownOpt] = useState(null);
+  
+  
+    useEffect(() => {
+      const url = `http://localhost:8000/api/timeperiod/${selIndicator}/${selSubgroup}/${selArea}`;
+      json(url).then( options =>{
+        setTimeperiodDropdownOpt(options);
+      }
+      )
+    }, [selIndicator,selSubgroup,selArea])
+  const boundaries = useData();
+
+  
+  if(!boundaries || !areaDropdownOpt || !subgroupDropdownOpt || !indicatorDropdownOpt || !timeperiodDropdownOpt){
   	return <pre>Loading...</pre>
   }
+  console.log(timeperiodDropdownOpt)
 
   // if(!areaDropdownOpt){
   // 	return <pre>Loading...</pre>
   // }
   let renderMap = renderedMap(boundaries);
   
-  const options = [
-    { value: 'one', label: 'One' },
-    { value: 'two', label: 'Two', className: 'myOptionClassName' },
-    {
-     type: 'group', name: 'group1', items: [
-       { value: 'three', label: 'Three', className: 'myOptionClassName' },
-       { value: 'four', label: 'Four' }
-     ]
-    },
-    {
-     type: 'group', name: 'group2', items: [
-       { value: 'five', label: 'Five' },
-       { value: 'six', label: 'Six' }
-     ]
-    }
-  ];
-  const defaultOption = areaDropdownOpt[0].label;
 
     return (
       <React.Fragment>
@@ -76,10 +101,25 @@ const Layout = () => {
           value={selArea}
           onChange={({ value }) => setSelArea(value)}
         />
+        <Dropdown
+          options={indicatorDropdownOpt}
+          value={selIndicator}
+          onChange={({ value }) => setSelIndicator(value)}
+        />
+        
+        <Dropdown
+          options={subgroupDropdownOpt}
+          value={selSubgroup}
+          onChange={({ value }) => setSelSubgroup(value)}
+        />
+        <Dropdown
+          options={timeperiodDropdownOpt}
+          value={selTimeperiod}
+          onChange={({ value }) => setSelTimeperiod(value)}
+        />
 
           </div>
           <div className="grid-item" id='map-div'>
-     
             <svg width={width} height={height}>
     	        {/* <Marks data={renderMap} width={width} height={height} onMapClick={setArea}/> */}
               <Map data={renderMap} width={width} height={height}/>
