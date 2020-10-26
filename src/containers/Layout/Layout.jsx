@@ -16,10 +16,6 @@ const height = window.innerHeight;
 
 const renderedMap = (boundaries) => (boundaries.state.features);
   
-
-
-
-
 const Layout = () => {
   //Area
   const iniSelArea = '1';  //india
@@ -76,19 +72,32 @@ const Layout = () => {
         setTimeperiodDropdownOpt(options);
       }
       )
+
     }, [selIndicator,selSubgroup,selArea])
+
+
+    useEffect(() => {
+    let flag = false;
+    if(timeperiodDropdownOpt){
+      timeperiodDropdownOpt.forEach(timeperiod => {
+        if(timeperiod.value === selTimeperiod){
+          flag = true;
+        }
+      });
+      if(!flag) setSelTimeperiod(timeperiodDropdownOpt[0].value)
+    }
+   
+    }, [timeperiodDropdownOpt])
+
   const boundaries = useData();
 
   
   if(!boundaries || !areaDropdownOpt || !subgroupDropdownOpt || !indicatorDropdownOpt || !timeperiodDropdownOpt){
   	return <pre>Loading...</pre>
   }
-  console.log(timeperiodDropdownOpt)
-
-  // if(!areaDropdownOpt){
-  // 	return <pre>Loading...</pre>
-  // }
+ 
   let renderMap = renderedMap(boundaries);
+  
   
 
     return (
@@ -104,9 +113,11 @@ const Layout = () => {
         <Dropdown
           options={indicatorDropdownOpt}
           value={selIndicator}
-          onChange={({ value }) => setSelIndicator(value)}
+          onChange={({ value }) => {
+            setSelIndicator(value);
+          }
+          }
         />
-        
         <Dropdown
           options={subgroupDropdownOpt}
           value={selSubgroup}
