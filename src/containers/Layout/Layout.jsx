@@ -76,6 +76,21 @@ const Layout = () => {
     }, [selIndicator,selSubgroup,selArea])
 
 
+
+    //india data
+    const [selIndiaData,setSelIndiaData] = useState(null);
+  
+    useEffect(() => {
+      const url = `http://localhost:8000/api/indiaMap/${selIndicator}/${selSubgroup}/${selTimeperiod}/2`;
+      json(url).then( data =>{
+        setSelIndiaData(data);
+      }
+      )
+
+    }, [selIndicator,selSubgroup,selTimeperiod])
+
+
+    // change selTimeperiod when indicator updated
     useEffect(() => {
     let flag = false;
     if(timeperiodDropdownOpt){
@@ -98,8 +113,6 @@ const Layout = () => {
  
   let renderMap = renderedMap(boundaries);
   
-  
-
     return (
       <React.Fragment>
         <div className="grid-container">
@@ -133,7 +146,7 @@ const Layout = () => {
           <div className="grid-item" id='map-div'>
             <svg width={width} height={height}>
     	        {/* <Marks data={renderMap} width={width} height={height} onMapClick={setArea}/> */}
-              <Map data={renderMap} width={width} height={height}/>
+              <Map geometry={renderMap} width={width} height={height} data = {selIndiaData} />
 
             </svg>
           </div>

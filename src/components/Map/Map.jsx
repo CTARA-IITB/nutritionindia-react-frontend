@@ -3,9 +3,11 @@ import { geoMercator, geoPath } from 'd3';
 
 
 
-export const Map = ({data, width, height}) => {
+export const Map = ({geometry, width, height, data}) => {
 const projection = geoMercator().scale(1350).translate([width/2, height/2]).center([73,19.7]);
 const path = geoPath(projection);
+console.log(data);
+console.log(geometry);
 //zoomToBoundingBox
 const zoomToBoundingBox = d => {
 let bounds = path.bounds(d),
@@ -19,12 +21,12 @@ let bounds = path.bounds(d),
   // zzoom.transform, d3.zoomIdentity.translate(translate[0],translate[1]).scale(scale)
   // ); 
 }
-zoomToBoundingBox(data);  
+zoomToBoundingBox(geometry);  
 
 return ( 
 	<g className="map">
     {
-    	data.map(feature =>{
+    	geometry.map(feature =>{
         return <path key = {feature.properties['ID_']}d= {path(feature)}/>
       })
     }
