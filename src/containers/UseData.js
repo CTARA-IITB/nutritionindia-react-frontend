@@ -18,6 +18,5 @@ export const useData = (selArea) => {
       })
     });  
   }, []);
-  
   return data;
   } 

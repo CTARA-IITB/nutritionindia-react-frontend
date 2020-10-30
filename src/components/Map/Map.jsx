@@ -6,8 +6,6 @@ import { geoMercator, geoPath } from 'd3';
 export const Map = ({geometry, width, height, data}) => {
 const projection = geoMercator().scale(1350).translate([width/2, height/2]).center([73,19.7]);
 const path = geoPath(projection);
-console.log(data);
-console.log(geometry);
 //zoomToBoundingBox
 const zoomToBoundingBox = d => {
 let bounds = path.bounds(d),

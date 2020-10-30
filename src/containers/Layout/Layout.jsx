@@ -8,6 +8,7 @@ import { Marks } from "../../components/Marks/Marks";
 import { Map } from "../../components/Map/Map";
 import { useData } from '../../containers/UseData'
 import { json } from 'd3';
+import { TreeSelect } from 'antd';
 
 import "./Layout.css";
 
@@ -15,7 +16,43 @@ const width = window.innerWidth;
 const height = window.innerHeight;
 
 const renderedMap = (boundaries) => (boundaries.state.features);
-  
+
+const createHierarchy = (options) =>{
+  let india = new Array(); 
+  let state = new Array(); 
+  let district = {};
+
+  options.forEach(area => {
+    let area_id = area.area_id.toString();
+    let level = area.area_level;
+    let parent_id = area.area_parent_id;
+    let area_name = area.area_name;
+    let temp = {'value':area_id,'title':area_name};
+
+    if(level === 1){
+      india.push(temp);
+    }else if(level === 2){
+      state.push(temp)
+    }else if(level === 3){
+      if(parent_id in district){
+        district[parent_id].push(temp);
+      }else{
+        district[parent_id] = [temp];
+      }
+    }
+  })
+
+  //adding subs to state
+  for(const i in state){
+    let stateInfo = state[i];
+    stateInfo['children'] = district[stateInfo.value];
+  }
+
+  //adding subs to india
+  india[0]['children'] = state;
+
+  return india;
+}
 const Layout = () => {
   //Area
   const iniSelArea = '1';  //india
@@ -25,7 +62,7 @@ const Layout = () => {
   useEffect(() => {
     const url = 'http://localhost:8000/api/area';
     json(url).then( options =>{
-      setAreaDropdownOpt(options);
+      setAreaDropdownOpt(createHierarchy(options));
     }
     )
   }, [])
@@ -68,6 +105,7 @@ const Layout = () => {
   
     useEffect(() => {
       const url = `http://localhost:8000/api/timeperiod/${selIndicator}/${selSubgroup}/${selArea}`;
+      // console.log(url);
       json(url).then( options =>{
         setTimeperiodDropdownOpt(options);
       }
@@ -106,23 +144,32 @@ const Layout = () => {
 
   const boundaries = useData();
 
-  
+  const [areatree, setareatree] = useState(null)
+
+  const onTreeChange = value => {
+    setareatree({ value });
+  };
   if(!boundaries || !areaDropdownOpt || !subgroupDropdownOpt || !indicatorDropdownOpt || !timeperiodDropdownOpt){
   	return <pre>Loading...</pre>
   }
  
   let renderMap = renderedMap(boundaries);
-  
+
     return (
       <React.Fragment>
         <div className="grid-container">
           {/* <div className="grid-item">header</div> */}
           <div className="grid-item">
-          <Dropdown
-          options={areaDropdownOpt}
-          value={selArea}
-          onChange={({ value }) => setSelArea(value)}
-        />
+          
+      <TreeSelect
+        style={{ width: '20%' }}
+        value={areatree}
+        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        treeData={areaDropdownOpt}
+        placeholder="Please select"
+        // treeDefaultExpandAll
+        onChange={onTreeChange}
+      />
         <Dropdown
           options={indicatorDropdownOpt}
           value={selIndicator}
