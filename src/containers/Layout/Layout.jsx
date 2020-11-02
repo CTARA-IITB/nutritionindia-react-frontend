@@ -188,7 +188,7 @@ const Layout = () => {
           value={selTimeperiod}
           onChange={({ value }) => setSelTimeperiod(value)}
         />
-
+          <button>ToggleMap</button>
           </div>
           <div className="grid-item" id='map-div'>
             <svg width={width} height={height}>
