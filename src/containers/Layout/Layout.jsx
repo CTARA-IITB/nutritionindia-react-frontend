@@ -6,7 +6,7 @@ import 'react-dropdown/style.css';
 // import Form from "../../components/Form/Form";
 import { Marks } from "../../components/Marks/Marks";
 import { Map } from "../../components/Map/Map";
-import { useData } from '../../containers/UseData'
+import { useData , useDataDistrict } from '../../containers/UseData'
 import { json } from 'd3';
 import { TreeSelect } from 'antd';
 
@@ -149,11 +149,17 @@ const Layout = () => {
   const onTreeChange = value => {
     setareatree({ value });
   };
+  const Dboundaries=useDataDistrict();
+  const [toggleState,setToggleState] = useState(true)
   if(!boundaries || !areaDropdownOpt || !subgroupDropdownOpt || !indicatorDropdownOpt || !timeperiodDropdownOpt){
   	return <pre>Loading...</pre>
   }
  
-  let renderMap = renderedMap(boundaries);
+  let renderMap=null;
+if(toggleState===true)
+  renderMap = renderedMap(boundaries);
+else
+  renderMap = renderedMap(Dboundaries);
 
     return (
       <React.Fragment>
@@ -188,7 +194,10 @@ const Layout = () => {
           value={selTimeperiod}
           onChange={({ value }) => setSelTimeperiod(value)}
         />
-          <button>toggle district</button>
+          <button
+          //value={boundaries}
+         onClick={()=>setToggleState(!toggleState)}> 
+         ToggleMap </button>
           </div>
           <div className="grid-item" id='map-div'>
             <svg width={width} height={height}>

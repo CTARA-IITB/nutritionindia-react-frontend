@@ -20,3 +20,19 @@ export const useData = (selArea) => {
   }, []);
   return data;
   } 
+
+  export const useDataDistrict = (selArea) => {
+    let [data, setData] = useState(null);
+    // console.log(selectedArea)
+    useEffect(() => {
+    const bundle = {}
+    json(jsonIndiaDistrict).then(districtTopology => {
+      const states = districtTopology.objects.india;
+        setData({'state':feature(districtTopology,states)})
+  
+    });  
+  }, []);
+  
+  return data;
+  } 
+  
