@@ -1,32 +1,53 @@
 import React from 'react';
-import { geoMercator, geoPath } from 'd3';
+import { geoMercator, geoPath, scaleSequential,interpolateRdYlGn, extent } from 'd3';
+import _ from 'lodash';
 
 
 
 export const Map = ({geometry, width, height, data}) => {
 const projection = geoMercator().scale(1350).translate([width/2, height/2]).center([73,19.7]);
 const path = geoPath(projection);
-//zoomToBoundingBox
-const zoomToBoundingBox = d => {
-let bounds = path.bounds(d),
-    dx = bounds[1][0] - bounds[0][0],
-    dy = bounds[1][1] - bounds[0][1],
-    x = (bounds[0][0] + bounds[1][0]) / 2,
-    y = (bounds[0][1] + bounds[1][1]) / 2,
-    scale = Math.max(1, Math.min(8, 0.9 / Math.max(dx / width, dy / height))),
-    translate = [width / 2 - scale * x, height / 2 - scale * y];
-  // svg.transition().duration(transitionDuration).call(
-  // zzoom.transform, d3.zoomIdentity.translate(translate[0],translate[1]).scale(scale)
-  // ); 
+
+
+// colorScale
+
+let color_range = _.map(data, d =>{
+  return +d.data_value
+});
+const colorScale = scaleSequential(interpolateRdYlGn).domain(extent(color_range))
+
+//merge geometry and data
+
+function addProperties(geojson,data){
+
+  let newArr = _.map(data, function(item) {
+    return {
+      areacode: item.area.area_code,
+      areaname: item.area.area_name,
+      dataValue: parseFloat(item.data_value),
+    }
+  });
+ 
+  let mergedGeoJson = _(newArr)
+    .keyBy('areacode')
+    .merge(_.keyBy(geojson, 'properties.ID_'))
+    .values()
+    .value();
+    
+    return mergedGeoJson;
 }
-zoomToBoundingBox(geometry);  
+
+let mergedGeometry = addProperties(geometry,data);
+console.log(mergedGeometry)
+
+
+const polygons = mergedGeometry.map((d,i) => <path key={"path"+i} d={path(d)}
+style = {{ fill:colorScale(d.dataValue) ,stroke:"black",strokeOpacity:0.5}}
+/>)
+
 
 return ( 
 	<g className="map">
-    {
-    	geometry.map(feature =>{
-        return <path key = {feature.properties['ID_']}d= {path(feature)}/>
-      })
-    }
+    { polygons }
   </g>
 )};

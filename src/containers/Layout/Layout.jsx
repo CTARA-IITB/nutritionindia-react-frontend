@@ -105,7 +105,6 @@ const Layout = () => {
   
     useEffect(() => {
       const url = `http://localhost:8000/api/timeperiod/${selIndicator}/${selSubgroup}/${selArea}`;
-      // console.log(url);
       json(url).then( options =>{
         setTimeperiodDropdownOpt(options);
       }
