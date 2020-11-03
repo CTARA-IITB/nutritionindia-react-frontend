@@ -143,13 +143,25 @@ const Layout = () => {
     }, [timeperiodDropdownOpt])
 
   const boundaries = useData();
-
+  const Dboundaries=useDataDistrict();
   const [areatree, setareatree] = useState(null)
 
   const onTreeChange = value => {
     setareatree({ value });
   };
-  const Dboundaries=useDataDistrict();
+  
+  
+const handleClick=()=>{
+  setToggleState(!toggleState);
+  let text=null;
+  if(buttonText==='District')
+    text='state';
+  else
+    text='District';
+  changeText(text);
+  }
+  const [buttonText, setButtonText] = useState("District");
+  const changeText = (text) => setButtonText(text);
   const [toggleState,setToggleState] = useState(true)
   if(!boundaries || !areaDropdownOpt || !subgroupDropdownOpt || !indicatorDropdownOpt || !timeperiodDropdownOpt){
   	return <pre>Loading...</pre>
@@ -176,28 +188,37 @@ else
         // treeDefaultExpandAll
         onChange={onTreeChange}
       />
-        <Dropdown
-          options={indicatorDropdownOpt}
-          value={selIndicator}
-          onChange={({ value }) => {
-            setSelIndicator(value);
-          }
-          }
+
+      <TreeSelect
+        style={{ width: '20%' }}
+        value={selIndicator}
+        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        treeData={indicatorDropdownOpt}
+        placeholder="Indicator"
+        onChange={({ value }) => {
+          setSelIndicator(value);
+        }
+        }
         />
-        <Dropdown
-          options={subgroupDropdownOpt}
-          value={selSubgroup}
-          onChange={({ value }) => setSelSubgroup(value)}
+
+      <TreeSelect
+        style={{ width: '20%' }}
+        value={selSubgroup}
+        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        treeData={subgroupDropdownOpt}
+        onChange={({ value }) => setSelSubgroup(value)}
         />
-        <Dropdown
-          options={timeperiodDropdownOpt}
-          value={selTimeperiod}
-          onChange={({ value }) => setSelTimeperiod(value)}
+
+      <TreeSelect
+        style={{ width: '20%' }}
+        value={selTimeperiod}
+        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        treeData={timeperiodDropdownOpt}
+        onChange={({ value }) => setSelTimeperiod(value)}
         />
-          <button
-          //value={boundaries}
-         onClick={()=>setToggleState(!toggleState)}> 
-         ToggleMap </button>
+
+          <button onClick={handleClick}> {buttonText} </button>
+
           </div>
           <div className="grid-item" id='map-div'>
             <svg width={width} height={height}>
