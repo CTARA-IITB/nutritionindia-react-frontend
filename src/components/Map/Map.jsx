@@ -2,6 +2,8 @@ import React,{useRef,useEffect} from 'react';
 import { geoMercator, geoPath, scaleSequential,interpolateRdYlGn, min,max,extent,select } from 'd3';
 import _ from 'lodash';
 
+import "./Map.css";
+
 
 
 export const Map = ({geometry, width, height, data}) =>{
@@ -80,6 +82,6 @@ useEffect(() => {
 
 return ( 
 <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
-  <svg width={width} height={height} ref={svgRef}></svg>
+  <svg ref={svgRef}></svg>
 </div>
 )};
