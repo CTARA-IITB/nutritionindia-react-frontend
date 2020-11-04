@@ -12,8 +12,8 @@ import { TreeSelect } from 'antd';
 
 import "./Layout.css";
 
-const width = window.innerWidth;
-const height = window.innerHeight;
+const width = "900";
+const height = "900";
 
 
 const renderedMap = (boundaries) => (boundaries.state.features);
@@ -238,11 +238,9 @@ else
 
           </div>
           <div className="grid-item" id='map-div'>
-            <svg width={width} height={height}>
     	        {/* <Marks data={renderMap} width={width} height={height} onMapClick={setArea}/> */}
               <Map geometry={renderMap} width={width} height={height} data = {selIndiaData} />
 
-            </svg>
           </div>
           {/* <div className="grid-item">footer</div> */}
 

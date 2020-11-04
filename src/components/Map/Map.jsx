@@ -1,21 +1,19 @@
-import React from 'react';
-import { geoMercator, geoPath, scaleSequential,interpolateRdYlGn, extent } from 'd3';
+import React,{useRef,useEffect} from 'react';
+import { geoMercator, geoPath, scaleSequential,interpolateRdYlGn, min,max,extent,select } from 'd3';
 import _ from 'lodash';
 
 
 
 export const Map = ({geometry, width, height, data}) =>{
-//const projection = geoMercator().fitSize([width, height], geometry);
-const projection = geoMercator().scale(1350).translate([width/2, height/2]).center([73,19.7]);
-const path = geoPath(projection);
 
+
+const svgRef = useRef();
+const wrapperRef = useRef();
 
 // colorScale
 
-let color_range = _.map(data, d =>{
-  return +d.data_value
-});
-const colorScale = scaleSequential(interpolateRdYlGn).domain(extent(color_range))
+
+// const colorScale = scaleSequential(interpolateRdYlGn).domain()
 
 //merge geometry and data
 
@@ -38,17 +36,50 @@ function addProperties(geojson,data){
     return mergedGeoJson;
 }
 
-let mergedGeometry = addProperties(geometry,data);
-console.log(mergedGeometry)
 
 
-const polygons = mergedGeometry.map((d,i) => <path key={"path"+i} d={path(d)}
-style = {{ fill:colorScale(d.dataValue) ,stroke:"black",strokeOpacity:0.5}}
-/>)
+useEffect(() => {
+  const svg = select(svgRef.current);
+  const projection = geoMercator().scale(1110).translate([width/2, height/2]).center([73,19.7]);
+  const pathGenerator = geoPath(projection);
+  let mergedGeometry = addProperties(geometry,data);
+  let c1Value  = d => d.data_value;
+  let c2Value  = d => d.dataValue;
+  
+  let color_range = _.map(data, d =>{
+    return +d.data_value
+  });
+  let [min,max] = extent(color_range);
+  let comp = (max - min)/3;
+  let low = min + comp;
+  let high = max - comp;
+
+
+  let colorScale = (v) =>{
+    if (typeof v != "undefined") {
+        let selectedColor;
+          if (v < low) {selectedColor =  "#24562B";}//matte green
+          else if (v >= low && v <= high) {selectedColor =  "#FFE338";}//matte yellow
+          else if (v > high) {selectedColor =  "#B2022F";} //matte red
+        return selectedColor;
+    }
+    else {
+      return "#A9A9B0";
+    }
+  };
+
+  svg
+    .selectAll(".polygon")
+    .data(mergedGeometry)
+    .join("path").attr("class", "polygon")
+    .attr("d" ,feature => pathGenerator(feature))
+    .style("fill", d =>colorScale(c2Value(d)));
+}, [geometry,width,height,data])
+
 
 
 return ( 
-	<g className="map">
-    { polygons }
-  </g>
+<div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
+  <svg width={width} height={height} ref={svgRef}></svg>
+</div>
 )};

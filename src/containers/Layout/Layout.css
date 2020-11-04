@@ -1,7 +1,7 @@
 .grid-container {
   display: grid;
-  /* grid-template-rows: 100px 200px auto 100px; */
-  grid-template-rows: 100px auto;
+  grid-template-rows: 100px 800px;
+  /* grid-template-rows: 100px auto; */
   background-color: #181818;
   padding: 10px;
   position: absolute;
