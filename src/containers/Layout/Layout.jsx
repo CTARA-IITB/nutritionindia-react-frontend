@@ -16,7 +16,7 @@ const width = "900";
 const height = "900";
 
 
-const renderedMap = (boundaries) => (boundaries.state.features);
+const renderedMap = (boundaries) => (boundaries.state);
 
 
 const createHierarchy = (options) =>{

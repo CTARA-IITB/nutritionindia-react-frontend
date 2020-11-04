@@ -8,7 +8,6 @@ import "./Map.css";
 
 export const Map = ({geometry, width, height, data}) =>{
 
-
 const svgRef = useRef();
 const wrapperRef = useRef();
 
@@ -39,12 +38,16 @@ function addProperties(geojson,data){
 }
 
 
+let tooltip = select("body").append("div") 
+.attr("class", "tooltip")       
+.style("opacity", 0);
 
 useEffect(() => {
   const svg = select(svgRef.current);
-  const projection = geoMercator().scale(1110).translate([width/2, height/2]).center([73,19.7]);
+  const projection = geoMercator().fitSize([width, height], geometry);
+
   const pathGenerator = geoPath(projection);
-  let mergedGeometry = addProperties(geometry,data);
+  let mergedGeometry = addProperties(geometry.features,data);
   let c1Value  = d => d.data_value;
   let c2Value  = d => d.dataValue;
   
@@ -70,14 +73,29 @@ useEffect(() => {
     }
   };
 
+  //OnMouseOver
+
+  const onMouseOver = (event,d) =>{	
+    if(typeof d.dataValue != 'undefined'){
+      tooltip.transition().duration(200).style("opacity", .9);		
+      tooltip.html("<b>"+d.areaname+"</b><br><b>Value:</b>"+d.dataValue)
+      .style("left", event.clientX + "px")
+      .style("top",  event.clientY - 30 + "px");	
+      console.log(event,d);
+    }
+  };
+
   svg
     .selectAll(".polygon")
     .data(mergedGeometry)
     .join("path").attr("class", "polygon")
     .attr("d" ,feature => pathGenerator(feature))
     .style("fill", d =>colorScale(c2Value(d)))
-    .on("mouseclick", d =>{
-      console.log(d)
+    .on("mouseover", (i,d) => onMouseOver(i,d))
+    .on("mouseout", function(d) {   
+      tooltip.transition()    
+      .duration(500)    
+      .style("opacity", 0); 
     });
 }, [geometry,width,height,data])
 
