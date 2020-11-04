@@ -15,7 +15,9 @@ import "./Layout.css";
 const width = window.innerWidth;
 const height = window.innerHeight;
 
+
 const renderedMap = (boundaries) => (boundaries.state.features);
+
 
 const createHierarchy = (options) =>{
   let india = new Array(); 
@@ -53,7 +55,16 @@ const createHierarchy = (options) =>{
 
   return india;
 }
-const Layout = () => {
+const Layout = ({tabId}) => {
+
+  let tab;
+    if(tabId === undefined)
+    {
+      tab =8;
+    }
+    else{
+      tab=tabId;
+    }
   //Area
   const iniSelArea = '1';  //india
   const [selArea,setSelArea] = useState(iniSelArea);
@@ -74,13 +85,20 @@ const Layout = () => {
 
 
   useEffect(() => {
-    const url = 'http://localhost:8000/api/indicator';
+    const url = 'http://localhost:8000/api/indicator/'+tab;
     json(url).then( options =>{
       setIndicatorDropdownOpt(options);
     }
     )
-  }, [])
+  }, [tabId])
 
+   // change selIndicator when indicator updated
+   useEffect(() => {
+    if(indicatorDropdownOpt){
+      setSelIndicator(indicatorDropdownOpt[0].value)
+    }
+   
+    }, [indicatorDropdownOpt])
 
     //subgroup
     const iniSelSubgroup = '6';  //All
@@ -154,6 +172,8 @@ const Layout = () => {
   }
  
   let renderMap = renderedMap(boundaries);
+  console.log("boundaries", boundaries);
+console.log("boundaries.state.features", boundaries.state.features);
 
     return (
       <React.Fragment>
