@@ -75,7 +75,10 @@ useEffect(() => {
     .data(mergedGeometry)
     .join("path").attr("class", "polygon")
     .attr("d" ,feature => pathGenerator(feature))
-    .style("fill", d =>colorScale(c2Value(d)));
+    .style("fill", d =>colorScale(c2Value(d)))
+    .on("mouseclick", d =>{
+      console.log(d)
+    });
 }, [geometry,width,height,data])
 
 
