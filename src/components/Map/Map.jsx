@@ -4,7 +4,8 @@ import _ from 'lodash';
 
 
 
-export const Map = ({geometry, width, height, data}) => {
+export const Map = ({geometry, width, height, data}) =>{
+//const projection = geoMercator().fitSize([width, height], geometry);
 const projection = geoMercator().scale(1350).translate([width/2, height/2]).center([73,19.7]);
 const path = geoPath(projection);
 
