@@ -81,7 +81,6 @@ useEffect(() => {
       tooltip.html("<b>"+d.areaname+"</b><br><b>Value:</b>"+d.dataValue)
       .style("left", event.clientX + "px")
       .style("top",  event.clientY - 30 + "px");	
-      console.log(event,d);
     }
   };
 

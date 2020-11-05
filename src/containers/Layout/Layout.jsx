@@ -79,10 +79,9 @@ const Layout = ({tabId}) => {
   }, [])
 
   //Indicator
-  const iniSelIndicator = '12';  //india
+  const iniSelIndicator = '12';  
   const [selIndicator,setSelIndicator] = useState(iniSelIndicator);
   const [indicatorDropdownOpt, setIndicatorDropdownOpt] = useState(null);
-
 
   useEffect(() => {
     const url = 'http://localhost:8000/api/indicator/'+tab;
@@ -161,12 +160,7 @@ const Layout = ({tabId}) => {
 
   const boundaries = useData();
   const Dboundaries=useDataDistrict();
-  const [areatree, setareatree] = useState('India')
 
-  const onTreeChange = value => {
-    setareatree({ value });
-  };
-  
   
 const handleClick=()=>{
   setToggleState(!toggleState);
@@ -185,6 +179,7 @@ const handleClick=()=>{
   }
  
   let renderMap=null;
+
 if(toggleState===true)
   renderMap = renderedMap(boundaries);
 else
@@ -195,15 +190,14 @@ else
         <div className="grid-container">
           {/* <div className="grid-item">header</div> */}
           <div className="grid-item">
-          
+            
       <TreeSelect
         style={{ width: '20%' }}
-        value={areatree}
+        value={selArea}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         treeData={areaDropdownOpt}
-        // placeholder="Please select"
         // treeDefaultExpandAll
-        onChange={onTreeChange}
+        onChange={ value =>  setSelArea(value) }
       />
 
       <TreeSelect
@@ -211,11 +205,7 @@ else
         value={selIndicator}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         treeData={indicatorDropdownOpt}
-        placeholder="Indicator"
-        onChange={({ value }) => {
-          setSelIndicator(value);
-        }
-        }
+        onChange={ value => setSelIndicator(value) }
         />
 
       <TreeSelect
@@ -223,7 +213,7 @@ else
         value={selSubgroup}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         treeData={subgroupDropdownOpt}
-        onChange={({ value }) => setSelSubgroup(value)}
+        onChange={ value => setSelSubgroup(value)}
         />
 
       <TreeSelect
@@ -231,7 +221,7 @@ else
         value={selTimeperiod}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         treeData={timeperiodDropdownOpt}
-        onChange={({ value }) => setSelTimeperiod(value)}
+        onChange={value => setSelTimeperiod(value) }
         />
 
           <button onClick={handleClick}> {buttonText} </button>
