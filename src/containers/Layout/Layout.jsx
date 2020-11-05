@@ -161,7 +161,7 @@ const Layout = ({tabId}) => {
 
   const boundaries = useData();
   const Dboundaries=useDataDistrict();
-  const [areatree, setareatree] = useState(null)
+  const [areatree, setareatree] = useState('India')
 
   const onTreeChange = value => {
     setareatree({ value });
@@ -201,7 +201,7 @@ else
         value={areatree}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         treeData={areaDropdownOpt}
-        placeholder="Please select"
+        // placeholder="Please select"
         // treeDefaultExpandAll
         onChange={onTreeChange}
       />

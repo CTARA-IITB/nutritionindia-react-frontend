@@ -102,7 +102,7 @@ useEffect(() => {
 
 
 return ( 
-<div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
-  <svg ref={svgRef}></svg>
+<div ref={wrapperRef}  style={{ marginBottom: "2rem" }}>
+  <svg className = "svg-map" ref={svgRef}></svg>
 </div>
 )};
